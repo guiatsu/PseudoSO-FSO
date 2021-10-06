@@ -11,18 +11,18 @@ vector<string> split_string(string line, string delimiter){
 	return splitted_line;
 }
 vector<vector<string>> read_file(string path){
-    fstream File;
-    File.open(path,ios::in);
+    fstream rFile;
+    rFile.open(path,ios::in);
     string line;
     vector<string> splitted_line;
     vector<vector<string>> file;
-    while(getline(File,line)){
+    while(getline(rFile,line)){
         if(line != ""){
             splitted_line = split_string(line,", ");
             file.push_back(splitted_line);
             
         }
     }
-    File.close();
+    rFile.close();
     return file;
 }

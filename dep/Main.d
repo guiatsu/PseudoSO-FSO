@@ -1,4 +1,4 @@
-dep/Main.d bin/Main.o: src/Main.cpp src/../include/File.hpp \
+dep/Main.d bin/Main.o: src/Main.cpp src/../include/Disk.hpp \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/iostream \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/c++config.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/os_defines.h \
@@ -110,16 +110,17 @@ dep/Main.d bin/Main.o: src/Main.cpp src/../include/File.hpp \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/ostream.tcc \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/istream \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/istream.tcc \
- C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/fstream \
- C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/codecvt.h \
- C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/basic_file.h \
- C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/c++io.h \
- C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/fstream.tcc \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/vector \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/stl_uninitialized.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/stl_vector.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/stl_bvector.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/vector.tcc \
+ src/../include/File.hpp \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/fstream \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/codecvt.h \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/basic_file.h \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/c++io.h \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/fstream.tcc \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/regex \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/algorithm \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/utility \
@@ -186,7 +187,7 @@ dep/Main.d bin/Main.o: src/Main.cpp src/../include/File.hpp \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/regex.tcc \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/regex_executor.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/regex_executor.tcc
-src/../include/File.hpp:
+src/../include/Disk.hpp:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/iostream:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/c++config.h:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/os_defines.h:
@@ -308,16 +309,17 @@ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/basic_ios.tcc:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/ostream.tcc:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/istream:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/istream.tcc:
-C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/fstream:
-C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/codecvt.h:
-C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/basic_file.h:
-C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/c++io.h:
-C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/fstream.tcc:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/vector:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/stl_uninitialized.h:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/stl_vector.h:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/stl_bvector.h:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/vector.tcc:
+src/../include/File.hpp:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/fstream:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/codecvt.h:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/basic_file.h:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/c++io.h:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/fstream.tcc:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/regex:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/algorithm:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/utility:
