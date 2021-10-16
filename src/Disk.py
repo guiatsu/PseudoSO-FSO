@@ -2,7 +2,7 @@ class Disk:
     def __init__(self, max_size):
         self.max_size = max_size
         self.memory = [""]*max_size
-        self.qtt_occupied = 0
+        self.qttOcuppied = 0
     def FindValidSegment(self,size):
         cont = 0
         for i in range(len(self.memory)):
@@ -20,7 +20,7 @@ class Disk:
             cont = 0
         return -1
     def CreateFile(self, name, initial_block, size):
-        if(self.max_size-self.qtt_occupied < size):
+        if(self.max_size-self.qttOcuppied < size):
             return "Nao pode criar o arquivo "+name+" (falta de espaco) ."
         else:
             if(initial_block >= self.max_size):
@@ -56,7 +56,7 @@ class Disk:
                 else:
                     for i in valid:
                         self.memory[int(i)] = name
-                        self.qtt_occupied += 1
+                        self.qttOcuppied += 1
                     if(len(valid) == 1):
                         return "Criou o arquivo "+name+" (bloco "+valid[0]+") ."
                     else:
