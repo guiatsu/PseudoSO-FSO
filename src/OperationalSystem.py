@@ -20,10 +20,10 @@ class OperationalSystem:
             if(time.time()-self.second >= 1):
                 for i in self.processes:
                     if(int(i[0]) == self.time):
-                        self.memory = self.ProcessManager.AddProcess(i,'User',self.memory)
+                        self.memory,text = self.ProcessManager.AddProcess(i,'RT',self.memory)
                         self.processes.remove(i)
                 
                 print(self.time)
-                self.ProcessManager.Update()
+                self.memory = self.ProcessManager.Update(self.memory)
                 self.second = time.time()
                 self.time += 1
