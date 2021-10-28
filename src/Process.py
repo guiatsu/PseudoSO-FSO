@@ -10,8 +10,18 @@ class Process:
         self.printNumber = int(process[4])
         self.scanNumber = int(process[5])
         self.modemNumber = int(process[6])
-        self.diskNumber = int(process[7])
+        self.sataNumber = int(process[7])
         self.instruction = self.execTime + 1
+        
+    def Print(self,state):
+        if(state == "BEGIN"):
+            print("P{} STARTED".format(self.PID))
+        elif(state == "RUNNING"):
+            print("P{} instruction {}".format(self.PID,self.instruction-self.execTime))
+        elif(state == "END"):
+            print("P{} return SIGINT".format(self.PID))
+        else:
+            print("P{} Stopping...".format(self.PID))
 
     def __gt__(self,other):
         return self.priority > other.priority

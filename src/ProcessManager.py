@@ -1,124 +1,176 @@
 from src.Process import *
-from queue import PriorityQueue
+from queue import Queue
 
 class ProcessManager:
 
     def __init__(self):
         self.nextPID = 0
-        self.RTQueue = PriorityQueue()
-        self.UserQueue = PriorityQueue()
+
+        self.RTQueue = Queue()
+        self.UserQueue = [Queue(),Queue(),Queue()]
+        self.processes = {}
+        self.qttProcessInQueue = 0
         self.runningProcess = (0,"")
-        self.dispatcher = 0
 
 
-    def AddProcess(self,process, type,memory):
-        if(self.RTQueue.qsize()+self.UserQueue.qsize() >= 999):
-            return memory,"Falha ao criar o processo, limite de processos atingido"
+    def AddProcess(self,process, processType,memory,ResourceManager):
+        if(self.qttProcessInQueue >= 1000):
+            self.nextPID += 1
+            return memory, "processo "+str(self.nextPID-1)+", nao sera executado, pois excedeu o limite da fila",ResourceManager
         else:
-            if(type == 'RT'):
-                memOffset = memory.FindValidSegment(int(process[3]),'RT')
+            if(processType == 'RT'):
+                memOffset = memory.FindValidSegment(int(process[3]),processType)
                 if(memOffset < 0):
-                    return memory,"Nao foi possivel criar o processo, falta de espaco na memoria"
-                else:
-                    memory.MemAlloc(self.nextPID,memOffset,'RT',int(process[3]))
-                    self.RTQueue.put((int(process[1]),Process(self.nextPID,memOffset,process)))
                     self.nextPID += 1
-            elif(type == 'User'):
-                memOffset = memory.FindValidSegment(int(process[3]),'User')
-                if(memOffset < 0):
-                    return memory,"Nao foi possivel criar o processo, falta de espaco na memoria"
+                    return memory, "processo "+str(self.nextPID-1)+", nao sera executado, pois excedeu o limite de memoria",ResourceManager
                 else:
-                    memory.MemAlloc(self.nextPID,memOffset,'User',int(process[3]))
-                    self.UserQueue.put((int(process[1]),Process(self.nextPID,memOffset,process)))
+                    memory.MemAlloc(self.nextPID,memOffset,processType,int(process[3]))
+                    self.RTQueue.put(Process(self.nextPID,memOffset,process))
                     self.nextPID += 1
-            return memory, ""
-    def Update(self,memory):
-        if(self.RTQueue.qsize()>0 or self.runningProcess[1] == "RT"):
-            if(self.runningProcess[1] == "User"):
-                if(self.runningProcess[0][1].execTime-1 == 0):
-                    self.runningProcess = (self.RTQueue.get(),"RT")
-                    self.PrintDispatcher(self.runningProcess[0][1])
-                    self.PrintProcess(self.runningProcess[0][1],"BEGIN")
-                    memory = self.RunProcess(memory)
-                else:
-                    self.UserQueue = self.PlaceInFrontOfQueue(self.UserQueue,self.runningProcess[0])
-                    self.PrintProcess(self.runningProcess[0][1],"STOPPING")
-                    #desalocar recursos aqui
-                    self.runningProcess = (self.RTQueue.get(),"RT")
-                    self.PrintDispatcher(self.runningProcess[0][1])
-                    self.PrintProcess(self.runningProcess[0][1],"BEGIN")
-                    memory = self.RunProcess(memory)
-            elif(self.runningProcess[1] == "RT"):
-                memory = self.RunProcess(memory)
-            else:
-                self.runningProcess = (self.RTQueue.get(),"RT")
-                self.PrintDispatcher(self.runningProcess[0][1])
-                self.PrintProcess(self.runningProcess[0][1],"BEGIN")
-                memory = self.RunProcess(memory)
+                    self.qttProcessInQueue += 1
+            elif(processType == 'User'):
+                text = ResourceManager.CanAlloc(int(process[4]),int(process[5]),int(process[6]),int(process[7]))
+                if(text == ""):
+                    memOffset = memory.FindValidSegment(int(process[3]),processType)
+                    if(memOffset < 0):
+                        self.nextPID += 1
+                        return memory, "processo "+str(self.nextPID-1)+", nao sera executado, pois excedeu o limite de memoria",ResourceManager
+                    else:
+                        memory.MemAlloc(self.nextPID,memOffset,processType,int(process[3]))
+                        self.UserQueue[int(process[1])-1].put(Process(self.nextPID,memOffset,process))
+                        self.nextPID += 1
+                        self.qttProcessInQueue += 1
 
-        elif(self.UserQueue.qsize()>0 or self.runningProcess[1] == "User"):
-            if(self.runningProcess[1] == "User"):
-                if((self.UserQueue.qsize() > 0) and (self.UserQueue.queue[0][0] < self.runningProcess[0][0])):
-                    self.PrintProcess(self.runningProcess[0][1],"STOPPING")
-                    #desalocar recursos aqui
-                    aux = self.runningProcess
-                    self.runningProcess = (self.UserQueue.get(),"User")
-                    self.PrintDispatcher(self.runningProcess[0][1])
-                    self.PrintProcess(self.runningProcess[0][1],"BEGIN")
-                    self.PlaceInFrontOfQueue(self.UserQueue,aux)
-                    memory = self.RunProcess(memory)
                 else:
-                    memory = self.RunProcess(memory)
+                    return memory, text, ResourceManager
+
+            self.processes[self.nextPID-1] = {
+                        "PID" : int(self.nextPID-1),
+                        "memOffset" : int(memOffset),
+                        "initTime" : int(process[0]),
+                        "priority" : int(process[1]),
+                        "execTime" : int(process[2]),
+                        "size" : int(process[3]),
+                        "printNumber" : int(process[4]),
+                        "scanNumber" : int(process[5]),
+                        "modemNumber" : int(process[6]),
+                        "sataNumber" : int(process[7]),
+            }
+            
+            return memory, "",ResourceManager
+
+    def Update(self,memory,ResourceManager):
+
+        if((self.RTQueue.qsize() > 0) or self.runningProcess[1] == "RT"):
+            if(self.runningProcess[1] == "User"):
+                if(self.runningProcess[0].execTime-1 == 0):
+                    self.RTQueue,ResourceManager = self.PrepareToRun(self.RTQueue,"RT",ResourceManager)
+                    memory,ResourceManager = self.RunProcess(memory,ResourceManager)
+                else:
+                    self.UserQueue[self.runningProcess[0].priority-1] = self.PlaceInFrontOfQueue(
+                                                                            self.UserQueue[self.runningProcess[0].priority-1],
+                                                                            self.runningProcess[0]
+                                                                        )
+                    self.runningProcess[0].Print("STOPPING")
+
+                    process = self.runningProcess[0]
+                    ResourceManager.FreeResources(process.printNumber,process.scanNumber,process.modemNumber,process.sataNumber)
+                    self.RTQueue,ResourceManager = self.PrepareToRun(self.RTQueue,"RT",ResourceManager)
+                    memory,ResourceManager = self.RunProcess(memory,ResourceManager)
+            elif(self.runningProcess[1] == "RT"):
+                memory,ResourceManager = self.RunProcess(memory,ResourceManager)
             else:
-                self.runningProcess = (self.UserQueue.get(),"User")
-                self.PrintDispatcher(self.runningProcess[0][1])
-                self.PrintProcess(self.runningProcess[0][1],"BEGIN")
-                memory = self.RunProcess(memory)
-        return memory
+                self.RTQueue,ResourceManager = self.PrepareToRun(self.RTQueue,"RT",ResourceManager)
+                memory,ResourceManager = self.RunProcess(memory,ResourceManager)
+        else:
+            queueToGet = 0
+            queueHasMember = False
+            if(self.UserQueue[0].qsize() > 0):
+                queueToGet = 0
+                queueHasMember = True
+            elif(self.UserQueue[1].qsize() > 0):
+                queueToGet = 1
+                queueHasMember = True
+            elif(self.UserQueue[2].qsize() > 0):
+                queueToGet = 2
+                queueHasMember = True
+            if(queueHasMember or self.runningProcess[1] == "User"):
+                if(self.runningProcess[1] == "User"):
+                    if((queueHasMember) and (queueToGet+1 < self.runningProcess[0].priority)):
+                        self.runningProcess[0].Print("STOPPING")
+    
+                        process = self.runningProcess[0]
+                        ResourceManager.FreeResources(process.printNumber,process.scanNumber,process.modemNumber,process.sataNumber)
+                        aux = self.runningProcess
+                        self.PlaceInFrontOfQueue(self.UserQueue[aux[0].priority-1],aux[0])
+                        self.UserQueue[queueToGet],ResourceManager = self.PrepareToRun(self.UserQueue[queueToGet],"User",ResourceManager)
+                        memory,ResourceManager = self.RunProcess(memory,ResourceManager)
+                    else:
+                        memory,ResourceManager = self.RunProcess(memory,ResourceManager)
+                else:
+                    self.UserQueue[queueToGet],ResourceManager = self.PrepareToRun(self.UserQueue[queueToGet],"User",ResourceManager)
+                    memory,ResourceManager = self.RunProcess(memory,ResourceManager)
+                
+
+        return memory,ResourceManager
             
           
-    def RunProcess(self,memory):
+    def RunProcess(self,memory,ResourceManager):
         if(self.runningProcess[1] == "RT"):
-            if(self.runningProcess[0][1].execTime-1 == 0):
-                #desalocar recursos aqui
-                memory.FreeMem(self.runningProcess[0][1].PID)
-                self.PrintProcess(self.runningProcess[0][1],"RUNNING")
-                self.PrintProcess(self.runningProcess[0][1],"END")
+            if(self.runningProcess[0].execTime-1 == 0):
+                memory.FreeMem(self.runningProcess[0].PID)
+                self.runningProcess[0].Print("RUNNING")
+                self.runningProcess[0].Print("END")
                 self.runningProcess = (0,"")
+                self.qttProcessInQueue -= 1
             else:
-                self.PrintProcess(self.runningProcess[0][1],"RUNNING")
-                self.runningProcess[0][1].execTime -= 1
+                self.runningProcess[0].Print("RUNNING")
+                self.runningProcess[0].execTime -= 1
                 
                 #roda processo de tempo real
         elif(self.runningProcess[1] == "User"):
-            if(self.runningProcess[0][1].execTime-1 == 0):
-                #desalocar recursos aqui
-                memory.FreeMem(self.runningProcess[0][1].PID)
-                self.PrintProcess(self.runningProcess[0][1],"RUNNING")
-                self.PrintProcess(self.runningProcess[0][1],"END")
+            if(self.runningProcess[0].execTime-1 == 0):
+                process = self.runningProcess[0]
+                ResourceManager.FreeResources(process.printNumber,process.scanNumber,process.modemNumber,process.sataNumber)
+                memory.FreeMem(self.runningProcess[0].PID)
+                self.runningProcess[0].Print("RUNNING")
+                self.runningProcess[0].Print("END")
                 self.runningProcess = (0,"")
+                self.qttProcessInQueue -= 1
             else:
-                self.PrintProcess(self.runningProcess[0][1],"RUNNING")
-                self.runningProcess[0][1].execTime -= 1
+                self.runningProcess[0].Print("RUNNING")
+                self.runningProcess[0].execTime -= 1
                
                 #roda processo de usuario
-                if(self.runningProcess[0][0] > 0):
-                    self.runningProcess[0][0] -= 1
-                    self.runningProcess[0][1].priority -= 1
-                for i in range(self.UserQueue.qsize()):
-                    aux = self.UserQueue.get()
-                    if(aux[0] > 0):
-                        aux[1].priority -= 1
-                        aux[0] -= 1
-                        self.UserQueue.put(aux[0])
-                    else:
-                        self.UserQueue.put(aux[0])
-        return memory
+                if(self.runningProcess[0].priority > 1):
+                    self.runningProcess[0].priority -= 1
+        return memory,ResourceManager
+    def PrepareToRun(self,queue,processType,ResourceManager):
+        self.runningProcess = (queue.get(),processType)
+        if(processType == "User"):
+            process = self.runningProcess[0]
+            text = ResourceManager.AllocResources(process.printNumber,process.scanNumber,process.modemNumber,process.sataNumber)
+            if(text != ""):
+                print(text)
+        self.PrintDispatcher(self.runningProcess[0])
+        self.runningProcess[0].Print("BEGIN")
+        return queue,ResourceManager
+
     def PlaceInFrontOfQueue(self,queue,item):
         queue.put(item)
         for i in range(queue.qsize()-1):
-                queue.put(queue.get())
+            queue.put(queue.get())
+
         return queue
+    def UpdatePriorities(self):
+        for i in range(1,len(self.UserQueue)):
+            for j in range(self.UserQueue[i].qsize()):
+                aux = self.UserQueue[i].get()
+                if(aux.priority > 1):
+                    aux.priority -= 1
+                    self.UserQueue[i].put(aux)
+                else:
+                    self.UserQueue[i].put(aux)
     def PrintDispatcher(self,process):
         print("dispatcher =>\n\
         \tPID: {}\n\
@@ -137,13 +189,4 @@ class ProcessManager:
                              process.printNumber,
                              process.scanNumber,
                              process.modemNumber,
-                             process.diskNumber))
-    def PrintProcess(self,process,state):
-        if(state == "BEGIN"):
-            print("P{} STARTED".format(process.PID))
-        elif(state == "RUNNING"):
-            print("P{} instruction {}".format(process.PID,process.instruction-process.execTime))
-        elif(state == "END"):
-            print("P{} return SIGINT".format(process.PID))
-        else:
-            print("P{} Stopping...".format(process.PID))
+                             process.sataNumber))

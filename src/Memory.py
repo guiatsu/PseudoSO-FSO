@@ -1,4 +1,5 @@
 class Memory:
+    
     def __init__(self):
         self.RTMSize = 64
         self.UsrMSize = 960
@@ -27,7 +28,7 @@ class Memory:
                         if(cont == size):
                             return i
                 else:
-                    i += cont
+                    i += cont+1
             else:
                 break
             cont = 0
@@ -41,6 +42,7 @@ class Memory:
         if(not PIDFound):
             return "Nao pode liberar o processo "+str(PID)+" da memoria porque ele nao existe."
         return "Liberou o processo "+str(PID)+" da memoria"
+
     def MemAlloc(self,PID,initial_block,processType,size):
         cont = 0
         end = 0
