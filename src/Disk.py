@@ -23,7 +23,6 @@ class Disk:
             cont = 0
         return -1
 
-
     def CreateFile(self,PID,process, name, initial_block, size):
 
         if(self.max_size-self.qttOcuppied < size):
@@ -98,3 +97,9 @@ class Disk:
         if(invalidProcess or not nameFound):
             return msg        
         return "Deletou o arquivo "+name
+
+    def Print(self):
+            print("|",end="")
+            for i in self.memory:
+                print(" "+i[0],end=" |")
+            print("\n")

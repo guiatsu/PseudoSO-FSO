@@ -7,9 +7,9 @@ import time
 
 class OperationalSystem:
 
-    def __init__(self):
-        self.archives = read_file("assets/files.txt")
-        self.processes = read_file("assets/processes.txt")
+    def __init__(self,path1,path2):
+        self.archives = read_file(path1)
+        self.processes = read_file(path2)
         self.disk = Disk(int(self.archives[0][0]))
         self.memory = Memory()
         self.second = time.time()
@@ -34,7 +34,7 @@ class OperationalSystem:
                             processesToRemove.append(i)
                     if(text != ""):
                         print(text)
-                print(self.time)
+                print("ciclo:" + str(self.time))
                 for i in processesToRemove:
                     self.processes.remove(i)
                 self.memory,self.ResourceManager = self.ProcessManager.Update(self.memory,self.ResourceManager)
@@ -59,6 +59,8 @@ class OperationalSystem:
                 text = self.disk.CreateFile(int(line[0]),processes.get(int(line[0])),line[2],offset,int(line[3]))
             if(line[1] == "1"):
                 text = self.disk.DeleteFile(int(line[0]),processes.get(int(line[0])),line[2])
-            print(text)
+            if(text != ""):
+                print(text)
+        self.disk.Print()
 
         print("todos processos foram finalizados, fim!")
