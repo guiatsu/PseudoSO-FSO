@@ -1,13 +1,13 @@
 class ResourceManager:
     def __init__(self):
-        self.scanAvail = ["Avail"]
-        self.printAvail = ["Avail"]*2
-        self.modemAvail = ["Avail"]
-        self.sataAvail = ["Avail"]*2
         self.scanMaxQtt = 1
         self.printMaxQtt = 2
         self.modemMaxQtt = 1
         self.sataMaxQtt = 2
+        self.scanAvail = ["Avail"]
+        self.printAvail = ["Avail"]*2
+        self.modemAvail = ["Avail"]
+        self.sataAvail = ["Avail"]*2
 
     def CanAlloc(self,printNumber,scanNumber,modemNumber,sataNumber):
         if(scanNumber >= self.scanMaxQtt or scanNumber < 0):

@@ -84,7 +84,7 @@ class Disk:
             if(self.memory[i][0] == name):
                 nameFound = True
                 if(process["priority"] == 0 or self.memory[i][1] == process["PID"]):
-                    self.memory[i] = "0"
+                    self.memory[i] = ("0",None)
                 else:
                     invalidProcess = True
         msg = ""
