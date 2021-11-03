@@ -43,6 +43,7 @@ class OperationalSystem:
                 self.time += 1
                 if(len(self.processes) == 0 and self.ProcessManager.qttProcessInQueue == 0):
                     break
+
         text = ""
         for i in range(2,2+int(self.archives[1][0])):
             line = self.archives[i]

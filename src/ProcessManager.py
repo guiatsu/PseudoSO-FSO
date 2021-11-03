@@ -63,10 +63,7 @@ class ProcessManager:
 
         if((self.RTQueue.qsize() > 0) or self.runningProcess[1] == "RT"):
             if(self.runningProcess[1] == "User"):
-                if(self.runningProcess[0].execTime-1 == 0):
-                    self.RTQueue,ResourceManager = self.PrepareToRun(self.RTQueue,"RT",ResourceManager)
-                    memory,ResourceManager = self.RunProcess(memory,ResourceManager)
-                else:
+
                     self.UserQueue[self.runningProcess[0].priority-1] = self.PlaceInFrontOfQueue(
                                                                             self.UserQueue[self.runningProcess[0].priority-1],
                                                                             self.runningProcess[0]
